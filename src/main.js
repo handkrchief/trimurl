@@ -1,11 +1,4 @@
 import './index.css'
+import { supabase } from './supabaseClient'
 
-const trimBtn = document.getElementById('trim-btn')
-
-trimBtn.addEventListener('click', () => {
-    
-    
-    
-    })
-
-    
+console.log(supabase)
