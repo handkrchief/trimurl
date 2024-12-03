@@ -1,9 +1,34 @@
-function trimUrl(originalUrl) {
+import { supabase } from './supabaseClient'
 
+function trimUrl(originalUrl) {
+    // We've already checked if the URL is valid in the button itself, but we'll check it again here.
+    if (!isValidURL(originalUrl)) {
+        return 'Invalid URL'
+    // If the URL is valid, we'll generate a new unique ID for the shortened URL and insert it into the database and return the shortened URL.
+    } else {
+        generateUniqueID()
+
+
+    }
 }
 
 function redirectToOriginal(shortCode) {
 
+}
+
+function generateUniqueID() {
+    // We'll generate a random string of 5 characters.
+    const length = 5
+    let randomString = getRandomString(length)
+    // We'll check if the generated string already exists within the database.
+    if (!checkIfUrlExists(randomString)) {
+        // If it doesn't exist within the database, we'll return it as it's unique.
+        return randomString
+    } else {
+        // If it exists within the database, we'll generate a new one with length + 1.
+        randomString = getRandomString(length + 1)
+    }
+    return randomString
 }
 
 function getRandomString(length) {
@@ -32,9 +57,20 @@ function getRandomString(length) {
             randomString += characterSet[randomIndex]
         }
     }
-
     return randomString
 }
 
+function isValidURL(string) {
+    try {
+        new URL(string)
+        return true
+    } catch (error) {
+        return false
+    }
+}
+
+async function checkIfUrlExists(url) {
+
+}
 export { trimUrl, redirectToOriginal }
 
