@@ -16,6 +16,8 @@ function redirectToOriginal(shortCode) {
 
 }
 
+// It's important to mention this doesn't guarantee uniqueness, but it's highly unlikely to generate the same string twice.
+// We'll consider implementing something more robust in the future.
 function generateUniqueID() {
     // We'll generate a random string of 5 characters.
     const length = 5
