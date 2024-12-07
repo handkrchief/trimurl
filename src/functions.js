@@ -1,23 +1,34 @@
 import { supabase } from './supabaseClient'
 
+export { trimUrl, redirectToOriginal }
+
 function trimUrl(originalUrl) {
     // We've already checked if the URL is valid in the button itself, but we'll check it again here.
     if (!isValidURL(originalUrl)) {
         return 'Invalid URL'
-    // If the URL is valid, we'll generate a new unique ID for the shortened URL and insert it into the database and return the shortened URL.
-    } else {
-        generateUniqueID()
-
-
     }
+    let shortCode;
+    // If the URL is valid, we'll check if it already exists within the database and return the short code if it does.
+    // OTHERWISE, we'll generate a new one. -> insert into db return short code for readonly field
+    if (!checkIfUrlExists(originalUrl)) {
+        shortCode = generateUniqueID();
+        // insert into db with new shortCode into short_code originalUrl in original_url
+        insertUrl(originalUrl, shortCode);
+    } else {
+        // return the short_code that corresponds to the given originalUrl
+        shortCode = getShortCodeFromOriginal(originalUrl);
+    }
+    return shortCode;
 }
 
+// This function will be for returning a originalUrl given the shortCode passed in (redirection for trimmed links)
 function redirectToOriginal(shortCode) {
 
 }
 
 // It's important to mention this doesn't guarantee uniqueness, but it's highly unlikely to generate the same string twice.
 // We'll consider implementing something more robust in the future.
+// Maybe just look into turning it into a recursive function that keeps generating new strings until it finds a unique one.
 function generateUniqueID() {
     // We'll generate a random string of 5 characters.
     const length = 5
@@ -72,7 +83,65 @@ function isValidURL(string) {
 }
 
 async function checkIfUrlExists(url) {
+    try {
+        // How to query the database to check for a values existance
+        const { data, error } =  await supabase
+            .from('urls')
+            .select('original_url')
+            .eq('original_url', url);
 
+        if (error) {
+            throw error;
+        }
+
+        // Check if data is returned
+        if (data.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (err) {
+        return false;
+    }
 }
-export { trimUrl, redirectToOriginal }
+
+async function getShortCodeFromOriginal(originalUrl) {
+    try {
+        const { data, error } = await supabase
+            .from('urls')
+            .select('short_code')
+            .eq('original_url', originalUrl);
+
+        if (error) {
+            throw error;
+        }
+
+        if (data.length > 0) {
+            return data[0].short_code;
+        }
+    } catch (err) {
+        console.error('Error fetching short_code:', err.message);
+        return null;
+    }
+}
+
+async function insertUrl(originalUrl, shortCode) {
+    try {
+        const { data, error } =  await supabase
+            .from('urls')
+            .insert([
+                {
+                    original_url: originalUrl,
+                    short_code: shortCode,
+                    timestamp: new Date().toISOString() // current timestamp
+                }
+            ]);
+        if (error) {
+            throw error;
+        }
+    } catch (err) {
+        console.error('Error inserting data:', err.message);
+    }
+}
+
 
