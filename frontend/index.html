@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrimURL</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/darkly/bootstrap.min.css" />
+    <link rel="stylesheet" href="styles.css"/>
 </head>
-<body>
-    <h1>Submit a URL</h1>
-    <form action="/submit" method="POST">
-        <label for="url">Enter a URL:</label>
-        <input type="url" id="url" name="url" placeholder="https://example.com" required>
-        <button type="submit">Submit</button>
-    </form>
 
-    
+<body>
+    <div class="container mt-4 text-center">
+        <h1>Trim a URL</h1>
+        <form id="submitUrl" class="mt-4" novalidate>
+            <input type="text" id="url" name="url" class="form-control" placeholder="https://example.com" required>
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        </form>
+    </div>
+
+    <div id="alertBox"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="index.js"></script>
 </body>
+
 </html>

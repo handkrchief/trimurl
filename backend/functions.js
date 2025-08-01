@@ -1,15 +1,7 @@
-// Helper function to validate URLs server side
-function isValidURL(string) {
-    try {
-        new URL(string);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
+const pool = require("./config");
 
 // Function to generate a random alphanumeric string
-function getRandomString(length) {
+function generateRandomString(length = 12) {
     const characterSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let randomString = '';
 
@@ -21,26 +13,25 @@ function getRandomString(length) {
     return randomString;
 }
 
-// Check if a short code already exists within the database
-async function checkIfUrlExists(shortCode, db) {
-    const result = await db.collection("urls").findOne({ short_code: shortCode });
-    return result !== null;
-}
+// Async function used to insert the URL into the DB
+async function insertUrl(url) {
+    let randomId;
+    let success = false;
 
-// Generate a unique short code
-async function generateUniqueID(db, length = 5) {
-    let randomString = getRandomString(length);
-
-    while (await checkIfUrlExists(randomString, db)) {
-        randomString = getRandomString(length + 1);
+    while (!success) {
+        randomId = generateRandomString();
+        try {
+            await pool.query("INSERT INTO links (url, trimmedUrl) VALUES (?, ?)", [url, randomId]);
+            success = true;
+        } catch (err) {
+            if (err.code !== 'ER_DUP_ENTRY') throw err;
+        }
     }
 
-    return randomString;
+    return randomId;
 }
 
 module.exports = {
-    isValidURL,
-    getRandomString,
-    checkIfUrlExists,
-    generateUniqueID,
+    generateRandomString,
+    insertUrl,
 };
