@@ -33,7 +33,4 @@ async function insertUrl(url) {
     return randomId;
 }
 
-module.exports = {
-    generateRandomString,
-    insertUrl,
-};
+module.exports = insertUrl;
