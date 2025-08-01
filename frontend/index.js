@@ -33,8 +33,10 @@ $('#submitUrl').on('submit', function (e) {
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ url }),
-        success: function (response) { 
-            $('#url').val(`http://localhost:2000/${response.trimmedUrl}`);
+        success: function (response) {
+            const trimmed = response.trimmedUrl;
+            const host = window.location.origin.includes('localhost') ? 'http://localhost:2000' : window.location.origin;
+            $('#url').val(`${host}/${trimmed}`);
             showAlert('URL trimmed successfully!', 'success');
         },
         error: function () {

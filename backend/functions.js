@@ -15,6 +15,7 @@ function generateRandomString(length = 12) {
 
 // Async function used to insert the URL into the DB
 async function insertUrl(url) {
+    console.log('insertUrl called with:', url);
     let randomId;
     let success = false;
 
@@ -24,6 +25,7 @@ async function insertUrl(url) {
             await pool.query("INSERT INTO links (url, trimmedUrl) VALUES (?, ?)", [url, randomId]);
             success = true;
         } catch (err) {
+            console.error('Insert error:', err);
             if (err.code !== 'ER_DUP_ENTRY') throw err;
         }
     }
